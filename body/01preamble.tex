@@ -1,0 +1,66 @@
+\usepackage{graphicx} % Aumenta funcionalidad para las figuras
+%\usepackage[activeacute,spanish]{babel} %Traduce Cosas como Índice, Referencias
+\usepackage[utf8]{inputenc} %Permite el uso de tildes
+\usepackage{xcolor} % Permite color
+\usepackage{blindtext} %Para rellenar
+\usepackage{booktabs} % Tablas mas bonitas
+\usepackage{array} % Aumenta la funcionalidad de las tablas
+\usepackage{lscape} % Gira la página
+\usepackage{mdwlist} % permite itemize*
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{epstopdf} % Para poner imágenes en .eps
+\usepackage{amsmath}
+\usepackage{esint}
+\usepackage{ccaption}%Cambia el formato de los pie de foto o tabla
+\usepackage{eulervm}
+\definecolor{ceruleanblue}{rgb}{0.16, 0.32, 0.75}
+\definecolor{cobalt}{rgb}{0.0, 0.28, 0.67}
+\usepackage[bookmarks=true,bookmarksnumbered,colorlinks=true,urlcolor=cobalt,linkcolor=cobalt,citecolor=cobalt,pdfstartview=FitH,linktoc=section,pdftex]{hyperref}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bce}{\begin{center}}
+\newcommand{\ece}{\end{center}}
+\captionnamefont{\bfseries}
+\captiontitlefont{\small}
+\captiondelim{:\ }
+\hangcaption
+%\addto\captionsspanish{
+%\def\tablename{Tabla}
+%}
+\usepackage[textheight=34cm,top=2cm,bottom=2cm,left=2.3cm,right=2.3cm,headsep=0.50cm,footskip=1cm]{geometry} % Márgenes
+\usepackage{fancyhdr} %Cabecera y pié
+%\pagestyle{fancy}
+
+%%% MODIFICABLES %%%
+\fancyhead[LO]{\footnotesize Departamento de Ingeniería Mecánica UTFSM} %Cabecera para las páginas impares
+\fancyhead[RO]{\footnotesize Informe de Tesis}
+\fancyfoot[RO]{\footnotesize Página \thepage\,\,}
+\lfoot{\footnotesize PCZ Diciembre 2018} \cfoot{}
+
+\renewcommand{\headrulewidth}{0.5pt} %modifica el ancho de la línea de cabecera
+\renewcommand{\footrulewidth}{0.5pt} %modifica el ancho de la línea del pie de página
+\renewcommand{\baselinestretch}{1.1}
+
+\setlength\parindent{0pt} %Sin identación
+%\numberwithin{equation}{section} %Numeración de las ecuaciones
+\usepackage{chngcntr}
+%\counterwithin{figure}{section}
+%\counterwithin{table}{section}
+\usepackage[labelfont=bf]{caption}
+\makeatletter
+\def\tagform@#1{\maketag@@@{(\ignorespaces\textbf{#1}\unskip\@@italiccorr)}}
+\renewcommand{\eqref}[1]{\textup{{\normalfont(\ref{#1}}\normalfont)}}
+\makeatother 
+
+\newcommand{\dpa}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ndp}[3]{\frac{\partial^#3 #1}{\partial #2 ^#3}}
+\newcommand{\cdpa}[3]{\frac{\partial^2 #1}{\partial #2 \partial #3}}
+\newcommand{\med}[1]{<\!\!#1\!\!>}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage[export]{adjustbox}
+\usepackage{natbib}
+\setcitestyle{aysep={},yysep={;}}

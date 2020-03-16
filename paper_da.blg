@@ -1,0 +1,61 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Arch Linux)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: paper_da.aux
+The style file: spbasic.bst
+Database file #1: body/biblio.bib
+Reallocated wiz_functions (elt_size=8) to 6000 items from 3000.
+`journal' is a missing field, not a string, for entry https://doi.org/10.5065/d6cf9n1j
+while executing---line 1649 of file spbasic.bst
+Warning--empty journal in https://doi.org/10.5065/d6cf9n1j
+Warning--missing school in phdthesis
+Warning--missing publisher in anuariocne2018
+`journal' is a missing field, not a string, for entry lilly1966representation
+while executing---line 1649 of file spbasic.bst
+Warning--empty journal in lilly1966representation
+Warning--empty year in MirochaNewLE; set to ????
+Warning--empty booktitle in MirochaNewLE
+`journal' is a missing field, not a string, for entry https://doi.org/10.5065/d68s4mvh
+while executing---line 1649 of file spbasic.bst
+Warning--empty journal in https://doi.org/10.5065/d68s4mvh
+You've used 80 entries,
+            3269 wiz_defined-function locations,
+            1120 strings with 21210 characters,
+and the built_in function-call counts, 94706 in all, are:
+= -- 8600
+> -- 2857
+< -- 35
++ -- 1029
+- -- 906
+* -- 8574
+:= -- 12873
+add.period$ -- 72
+call.type$ -- 80
+change.case$ -- 694
+chr.to.int$ -- 79
+cite$ -- 87
+duplicate$ -- 8367
+empty$ -- 8703
+format.name$ -- 1146
+if$ -- 19864
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 883
+newline$ -- 250
+num.names$ -- 320
+pop$ -- 2008
+preamble$ -- 1
+purify$ -- 620
+quote$ -- 0
+skip$ -- 1426
+stack$ -- 0
+substring$ -- 11123
+swap$ -- 1876
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 678
+warning$ -- 7
+while$ -- 686
+width$ -- 0
+write$ -- 858
+(There were 3 error messages)

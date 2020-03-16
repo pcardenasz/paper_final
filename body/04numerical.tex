@@ -1,0 +1,71 @@
+\section{Numerical Model}
+\subsection{WRF Atmospheric Model}
+%WRF es un modelo numérico mesoescala de última generación y representa el estado del arte respecto a los desarrollos científicos e ingenieriles en predicción numérica del clima. Es un software de código libre, flexible, portátil y eficiente de manera que permite realizar simulaciones tanto en notebooks como en supercomputadores masivamente paralelizados \citep{https://doi.org/10.5065/d68s4mvh}. 
+WRF is a state-of-the-art numerical mesoscale model that represent the latest scientific and engineering developments in climate prediction. It is open source, flexible, portable and efficient so that it allows simulations on both notebooks and massively parallelized supercomputers \citep{https://doi.org/10.5065/d68s4mvh}.
+
+%Este modelo resuelve las ecuaciones de Euler no hidrostáticas para flujo completamente compresible a través de un esquema de diferencias finitas. La discretización espacial se lleva a cabo a través de una malla horizontal cartesiana escalonada de modo C-Arakawa y una malla vertical que sigue al terreno basada en presión hidrostática de aire seco. La integración temporal se efectúa con un esquema Runge-Kutta de 2do orden.
+This model solves the non-hydrostatic Euler equations for fully compressible flow through a finite difference scheme. Spatial discretization is carried out through a C-Arakawa horizontal grid and a ground-following vertical grid based on hydrostatic dry air pressure. The temporal integration is carried out with a 2nd order Runge-Kutta scheme.
+
+%Las ondas de presión que aparecen por la compresibilidad del modelo son filtradas del campo medio a través de un filtro para la divergencia, y son resueltas en un sub paso de tiempo ($1/3$ del modo externo) asegurando la estabilidad del esquema.
+The pressure waves that appear due to the model compressibility are filtered from the mean field through a divergence filter and are resolved in a time sub-step ($1/3$ of the external mode) ensuring the stability of the scheme.
+
+%Las condiciones de borde son especificadas según los resultados de un modelo global para los límites horizontales. En el límite superior se fija una  condición de presión constante con una capa de amortización y en la superficie del suelo se utilizan funciones de pared a través de la parametrización de capa superficial.
+The boundary conditions are specified from the results of a global model for the horizontal boundaries.  A constant pressure condition with a damping layer at the upper boundary and wall functions are used at the soil surface through the surface layer parametrization. The initial condition also comes from a global model results.
+
+%La alta resolución en el modelo es alcanzada gracias a la combinación del escalamiento dinámico de dominios anidados con la implementación de nuevas bases de datos para la información estática. La inicialización de los dominios internos de hace a través de un escalamiento dinámico de los resultados de los dominios padres. De esta manera se hablará de dominios de meso escala para aquellos que cumplan $\Delta x > 1000$ (m) y de microescala para $\Delta x < 500$ (m). 
+The high resolution is achieved by combining the dynamic downscaling of nested domains with the implementation of new databases for static information. The initialization of the internal domains is done through the downscaling of the results of the parent domains. In this way we will talk about mesoscale domains for those that meet $\Delta x > 1000$ (m) and microscale for $\Delta x < 500$ (m). 
+
+The physical phenomena that are outside the model's mesh resolution are parameterized through several advanced schemes provided by WRF. Radiation, phase-change, cloud formation, surface interaction, boundary layer transport and turbulence are all considered within the model and are included in the right side of the equations as dependent terms.
+%Los fenómenos físicos que quedan fuera de la resolución de la malla del modelo son parametrizados a través de varios esquemas avanzados que presenta WRF. La radiación, cambio de fase, formación de nubes, interacción con el suelo, transporte en la capa límite y turbulencia, todos son considerados dentro del modelo y pasan a ser parte del lado derecho de las ecuaciones como términos dependientes.
+
+Regarding turbulence, for the mesoscale it is represented by a vertical eddy viscosity that is computed in the PBL parametrization subroutine, while the horizontal eddy viscosity is computed through a Smagorinsky closure \citep{smagorinsky1963general}. On the microscale, the PBL parametrization is turned off and a LES 1.5TKE  model is used \citep{deardorff1980stratocumulus}.
+%Con respecto a la turbulencia, para los dominios de mesoescala esta es representada por una viscosidad turbulenta vertical que es calculada en la subrutina de parametrización de CLP, mientras que la viscosidad turbulenta horizontal es calculada a través de una clausura de Smagorinsky \citep{smagorinsky1963general}. En la microescala, se apaga la parametrización de CLP y se utiliza un modelo LES 1.5TKE \citep{deardorff1980stratocumulus}.
+
+\subsection{Large Eddy Simulation and Sub-Grid Stress}
+The application of a Large Eddy Simulation (LES) model for the turbulence in the micro-scale implies the use of a low-pass filter on the independent variables as:
+%La utilización de un modelo de Simulación de Grandes Vórtices (LES) para la turbulencia  en la microescala implica la utilización de un filtro pasa baja en las variables independientes de la forma,
+\be
+\widetilde{\varphi}(x_j,t) = \int \!G(r_i,x_j)\varphi(x_j-r_i,t)dr_i,
+\ee
+where $\varphi$ represents any variable. The kernel $G$ allows the filtering of every variation whose scale is smaller than the filter width $\Delta x$. For the WRF software, the filtering operation is a numerical consequence of the spatial mesh and therefore is called an implicit filter. In the micro-scale all the variables of the model represent filtered variables.
+%donde $\varphi$ representa una variable cualquiera. El kernel del filtro $G$ permite eliminar todas las escalas que sean menores que el ancho del filtro. En el caso del software WRF, la operación de filtrado es una consecuencia numérica de la malla espacial y por lo tanto se habla de un filtro implícito. En los dominios de microescala todas las variables del modelo corresponden a variables filtradas.
+
+The result of applying the filtering operation to the momentum equation is the creation of a non-closed term for the sub-grid stress $\tau_{ij}$ of the form,
+%La aplicación de la operación de filtrado a la ecuación de momentum tiene como resultado la aparición de un término no cerrado para los esfuerzos de submalla (sub-grid stress o SGS) de la forma,
+\be 
+\tau_{ij} = \widetilde{u_iu_j} - \widetilde{u}_i\widetilde{u}_j,
+\ee
+$\widetilde{u}_i$ corresponds to the filtered/resolved velocity components in the $(x,y,z)$ directions. The closure of $\tau_{ij}$ requires the implementation of a new equation that relates the stresses to known variables. For this paper, closure is accomplished using the 1.5TKE model which expresses the anisotropic sub-grid stresses $\tau^r_{ij}$ as a function of a turbulent viscosity $\nu_t$ and the resolved strain rate $\widetilde{S}_{ij}$ in the form, 
+%$\widetilde{u}_i$ corresponde a las componentes de  la velocidad filtradas/resueltas en las direcciones $(x,y,z)$. La clausura de $\tau_{ij}$ requiere la aplicación de una nueva ecuación que relacione los esfuerzos con variables conocidas. Para este artículo la clausura se lleva a cabo utilizando el modelo 1.5TKE el cual expresa los esfuerzos anisotrópicos de submalla en función de una viscosidad turbulenta $\nu_t$ y la tasa de deformación resuelta $\widetilde{S}_{ij}$ de la forma,
+\be 
+\tau^r_{ij} = \tau_{ij} - \frac{1}{3}\tau_{nn}\delta_{ij} = -2\nu_t\widetilde{S}_{ij}.
+\ee
+Here $\delta_{ij}$ is the Kronecker delta and the $\widetilde{S}_{ij}$ tensor is defined as
+\be 
+\widetilde{S}_{ij} = \frac{1}{2}\left( \frac{\partial \widetilde{u}_i}{\partial x_j} + \frac{\partial \widetilde{u}_j}{\partial x_i}\right).
+\ee 
+The LES package in WRF \citep{Yamaguchi2012}, expresses the turbulent viscosity as
+%El paquete LES en WRF \citep{Yamaguchi2012}, expresa la viscosidad turbulenta como,
+\be 
+\nu_{t}=c_k \ell \sqrt{k},
+\ee
+where $c_k$ is the constant of the model ($0.15\sim\! 0.30$) and $k$ is the sub-grid kinetic energy defined as:
+%donde $c_k$ es la constante del modelo ($0,15\!\sim\! 0,30$) y $k$ es la energía cinética de submalla definida como:
+\be 
+k = \frac{1}{2}\tau_{nn}.
+\ee 
+The characteristic length $\ell$ of the model is calculated as:
+%El largo característico $\ell$ del modelo se calcula como:
+\begin{equation}
+\ell = \begin{cases}\min[(\Delta x \Delta y \Delta z)^{1/3}, 0.76\sqrt{k}/N]&\quad N^2>0\\
+(\Delta x \Delta y \Delta z)^{1/3}&\quad N^2\leq 0\end{cases}
+\end{equation}
+$N$ is the Brunt-Väisälä frequency for humid air.
+%$N$ corresponde a la frecuencia de Brunt-Väisälä para aire húmedo.
+
+Finally, the value of $k$ in each domain cell is calculated based on the transport equation defined by  \cite{https://doi.org/10.5065/d68s4mvh}.
+%Finalmente el valor de $k$ en cada elemento del dominio es computado según la ecuación de transporte definida por \cite{https://doi.org/10.5065/d68s4mvh}.
+
+
+
+

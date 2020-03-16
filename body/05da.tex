@@ -1,0 +1,56 @@
+\subsection{Data Assimilation Process}
+From the WRF model, three-dimensional arrays of the resolved meteorological variables are obtained for a given time (background). The data assimilation goal is to physically weight the field measurements (observations) with these results to obtain the best estimate of the state of the atmosphere (analysis).
+%Del modelo WRF se obtienen arreglos tridimensionales de las variables meteorológicas resueltas para un tiempo dado. El objetivo de la asimilación de datos es ponderar de una manera física las observaciones obtenidas en terreno con estos resultados (background) para obtener el mejor estimador del estado de la atmósfera (análisis).
+
+Theoretically, the data assimilation process tries to minimize the cost function $J(x)$ that weighs the errors coming from the background $J_b$ and from observations $J_o$:
+%De manera teórica, el proceso de asimilación de datos busca minimizar la función de costo que pondera los errores provenientes desde el background y de las observaciones:
+\be
+J(x)=J_b+J_o
+\ee
+\be 
+J(x)=\frac{1}{2}(x-x_b)^TB^{-1}(x-x_b)+\frac{1}{2}(Hx-y)^TR^{-1}(Hx-y)
+\ee
+Here $B$ is the background variance or error matrix and $R$ is the observation error matrix.
+%Acá $B$ es la matriz de varianzas o errores del background y $R$ es la matriz de errores de las observaciones.
+
+The observation operator $H$ performs a 3D interpolation of the numerical grid values to the observation space.
+%El operador de observación H se encarga de hacer una interpolación 3D de la malla numérica al espacio de observación.
+
+The variational problem is solved for the value $x=x_a$ which nullifies the cost function gradient:
+%El problema variacional es resuelto para el valor $x=x_a$ que nulifica el gradiente de la función de costo:
+\be 
+\nabla J(x)=B^{-1}(x-x_b)-H^TR^{-1}(Hx-y)=0
+\ee
+The increment can then be expressed as:
+%Se puede expresar el incremento entonces como:
+\be 
+x_a-x_b = BH^T(HBH^T+R)^{-1}(y-Hx_b)
+\ee
+
+The above equation can be interpreted by recognizing that $HBH^T$ is the background error projection in the observation space and $BH^T$ is another projection but in the background-observation space. The result is therefore a weighted projection of the gap between the observations and the background.
+%La ecuación anterior se puede interpretar reconociendo que $HBH^T$ es la proyección del error del background en el espacio de obervación y $BH^T$es otra proyección pero en el espacio de background-observación. El resultado es entonces una proyección de la diferencia entre las observaciones y el background.
+
+In WRF the solution is calculated with the following variable changes in mind:
+%Operativamente, la solución se calcula considerando los siguientes cambios de variables:
+\begin{align}
+y'_o &= y_o - Hx_b\\
+x'&=Uv=x-x_b
+\end{align}
+Where $U$ is defined such that:
+%Donde $U$ es definida de tal forma que:
+\be
+UU^T\approx B
+\ee
+$v$ is a so-called control variable. Note that $y'_o$ is the innovation vector, that is, the difference between the observation and the background. $x'$ is the analysis increment.
+%$v$ es llamada variable de control. Notar que $y'_o$ es el vector de innovación, es decir, la desviación entre la observación y el background. $x'$ es el incremento de análisis.
+
+Under these new variables the variational problem is written as:
+\be 
+J(v) = \frac{1}{2}v^Tv + \frac{1}{2}(y'_o-\overline{H}Uv)^TR^{-1}(y'_o-\overline{H}Uv)
+\ee
+$\overline{H}$ is the linearized observation operator.
+%$\overline{H}$ es el operador de observación linealizado.
+
+In practice, $U$ is a recursive application of several filters that allow the assimilation process to be less costly and that the control variable complies the atmospheric balances. The equation is solved recursively for $v$ using a Quasi-Newtonian minimization algorithm.  
+
+%En la práctica, $U$ es una aplicación recursiva de varios filtros que permiten que el proceso de asimilación sea menos costoso y que la variable de control cumpla con los balances atmosféricos. La ecuación se resuelve recursivamente para $v$ usando un algoritmo de minimización Quasi-Newtoniano.  
